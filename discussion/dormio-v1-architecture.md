@@ -59,16 +59,46 @@ flowchart LR
 - **Other income and expenses:** separate dated, categorized records; expenses may optionally link to a room.
 - **Maintenance issue:** room-linked issue record kept independent from reservations, contracts, and room availability.
 
-## Proposed Relational Shape
+## Proposed Relational Schema (Discussion Draft)
 
-This is a candidate table grouping, not a committed schema.
+This is a first-pass relational model, not committed SQL or migrations.
 
-- **Reference data:** `rooms`, `renters`, and `services`; `room_service_defaults` assigns a service and its billing terms to a room.
-- **Occupancy:** `reservations` link rooms and renters; `reservation_deposit_receipts` record deposit payments. `contracts` link one room and one primary renter, with copied terms and headcount; `contract_services` stores service settings for that contract.
-- **Billing:** `bills` group a contract's charges by month, and `bill_lines` represent rent, services, and deposit due. `meter_readings` store period readings for contract services. Posted bill lines snapshot calculation inputs so history is stable.
-- **Collections and income:** `payments` belong to a renter and are not linked to individual bill lines. The renter balance is derived across their posted charges and payments. `income_entries` record other income, forfeited reservation deposits, and rent/service income when the renter balance clears.
-- **Expenses and maintenance:** `expenses` are dated and categorized with an optional room link; `maintenance_issues` belong to a room.
-- **Constraints:** allow at most one active occupancy per room: an active reservation or an active contract, never both. Allow at most one bill per contract per month. Derive room status instead of maintaining a second, independently editable status value.
+### Core and occupancy
+
+- `rooms`: `id`, `owner_id`, name/number, default monthly rent, and default deposit. Do not store an editable status; derive it from active reservation or contract records.
+- `renters`: `id`, `owner_id`, required name and phone number.
+- `reservations`: `id`, `owner_id`, `room_id`, `renter_id`, intended move-in date, and lifecycle state (reserved, canceled, converted).
+- `contracts`: `id`, `owner_id`, `room_id`, `renter_id`, optional source reservation, move-in date, monthly rent, deposit amount, anonymous resident headcount, and active/ended state. Contract-term changes affect future bills only.
+- `contract_terminations`: one record per ended contract, with actual move-out date and confirmation timestamp. The contract-end bill references this record.
+
+### Services and billing
+
+- `services`: landlord-owned service catalog.
+- `room_service_settings`: unique room/service pair with billing basis and default rate.
+- `contract_service_settings`: unique contract/service pair copied from room defaults and overridable for the contract.
+- `meter_readings`: contract service and billing period, start/end values, and correction/finalization state. Keep readings editable until the charge is posted.
+- `bills`: contract, type (`monthly` or `contract_end`), billing period when monthly, due date, and draft/posted state.
+- `bill_lines`: bill, line type, amount, category/service reference, and calculation snapshots (rate, headcount, usage, and meter readings). Include explicit deposit-due, deposit-applied, and refund-due lines in the contract-end statement; only actual refunds are cash transactions.
+
+### Money and operations
+
+- `payments`: renter, amount, actual payment date, and method. These remain renter-level with no landlord allocation to individual bill lines.
+- `deposit_transactions`: append-only deposit receipt, application, forfeiture, and refund events linked to the reservation or contract. Refund events store amount, actual date, and method (**Cash** or **Transfer**); deposits are not income or expenses.
+- `income_entries`: categorized other income, forfeited reservation deposits, and rent/service income recognized when the renter-wide balance reaches zero. Link recognized entries to their source bill lines where applicable.
+- `expenses`: amount, date, category/label, and optional room.
+- `maintenance_issues`: room, description, date, status, and notes; independent of occupancy.
+
+### Key constraints and access
+
+- Use `numeric`, not floating-point, for monetary values; add nonnegative amount and valid-state checks.
+- Add partial unique indexes for one active reservation per room and one active contract per room. Serialize room reservation, move-in, and termination through a transaction that locks the room so a room cannot have an active reservation and contract simultaneously.
+- Allow at most one monthly bill per contract and billing month, and one contract-end bill per termination.
+- Use unique constraints for room/service defaults and contract/service settings. Ensure all foreign-key relationships remain within the same `owner_id`.
+- Scope every landlord-owned row with row-level security. Validate payment amount against the current combined renter balance atomically when recording it.
+
+### Open Relational Question
+
+- Since payments are not manually allocated to line items, define how the system determines how much of the refundable contract deposit has actually been received. The close-out workflow needs that amount to apply or refund, especially if a renter has only partially paid the combined balance.
 
 ## Proposed Workflow Boundaries
 
@@ -77,6 +107,16 @@ This is a candidate table grouping, not a committed schema.
 3. Monthly billing captures rent and service charges, with usage readings corrected before the relevant charge is posted.
 4. Payments update the renter's combined balance. Income summaries combine qualifying paid rent and services with other income; expenses are reported separately.
 5. Maintenance is recorded and updated independently, without changing room availability.
+
+## Contract Termination and Close-Out
+
+- V1 allows the landlord to terminate an active room contract and create a contract-end bill (close-out statement) for its final service charges and refundable-deposit settlement.
+- Show final service charges and deposit settlement separately. Apply the held deposit only against final charges from that same contract; refund any remaining deposit. If final charges exceed the deposit, the remainder stays due on the renter's combined balance. Do not offset unrelated or earlier renter charges with the deposit.
+- Treat deposit application and refund as settlement of a refundable liability, not income or expense. Final service charges follow the renter-wide balance and income-recognition rules.
+- Record each deposit refund when it is actually paid, including the amount, actual payment date, and method (**Cash** or **Transfer**).
+- On termination confirmation, preserve the contract and its history, stop future charges, and make the room Available. Room release does not wait for the final balance to be collected or the refund to be issued. Existing renter balances remain governed by the renter-wide balance rules.
+- The landlord enters the final-month rent amount on the contract-end bill; V1 does not automatically prorate it.
+- For usage-based services, the close-out statement uses the contract's final meter readings.
 
 ## Paid Status and Income Recognition
 
@@ -102,4 +142,4 @@ This is a candidate table grouping, not a committed schema.
 
 ## Next Design Step
 
-Translate this proposed domain model into relational tables, constraints, migrations, and row-level security policies.
+Resolve how unallocated renter payments contribute to refundable-deposit balances, then review this table model before creating migrations and row-level security policies.
