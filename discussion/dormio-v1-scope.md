@@ -29,7 +29,7 @@ The landlord can:
 - Manage rooms as standalone records, without property, building, or address details. Each room has a name or number, default monthly rent, and default refundable security-deposit amount.
 - Set each room's status to **Available**, **Reserved**, or **Occupied**. Maintenance is tracked separately and is not a room status in V1.
 - Maintain renter records with **Name** and **Phone number** as required fields. Visitor tracking is not included.
-- For per-person service charges, use the number of renters with an active contract for the room on the first day of the month.
+- A room may have at most one active contract, linked to one main renter. The main renter may live with other residents, but Dormio does not store individual records for them. The contract records an anonymous resident headcount, including the main renter.
 
 ### Reservations and move-in contracts
 
@@ -46,15 +46,16 @@ The landlord can:
 - Manually enter one rent charge per month, with an amount and due date.
 - Allow multiple manual payments toward the renter's combined outstanding balance, including payments made using different methods. Do not require the landlord to allocate a payment to an individual rent or service line item.
 - For each payment, record the amount, date, and method: **Cash** or **Transfer**.
+- Reject any payment greater than the renter's current combined outstanding balance; do not carry overpayments forward as credit.
 - Show the combined renter balance as **Unpaid**, **Partially paid**, or **Paid**, based on total charges and payments received.
-- Count rent and service charges as income only when the combined renter bill is fully paid. Partial payments reduce the combined balance but are not counted as income. Categorize rent as **Rent** and each service charge by its service name. Do not count refundable security deposits as income unless a reservation is canceled.
+- Count rent and service charges as income only when the renter's combined balance across posted charges and payments reaches zero. Partial payments reduce the balance but are not income; recognize eligible charges in the month the balance reaches zero. Categorize rent as **Rent** and each service charge by its service name. Do not count refundable security deposits as income unless a reservation is canceled.
 
 ### Renter room services
 
 - Allow the landlord to create and name services for renters, including electricity, water, and other services, and assign default services to rooms. Contract-specific service settings may override the room defaults.
 - Calculate service charges monthly using one of these bases:
   - **Per room:** a fixed monthly amount.
-  - **Per person:** a monthly rate multiplied by the number of renters with an active contract for the room on the first day of the month.
+  - **Per person:** a monthly rate multiplied by the anonymous resident headcount on the room's active contract on the first day of the month.
   - **By usage:** the difference between the start and end meter readings multiplied by a landlord-set price per unit. A unit label is not required in V1.
 - Record start and end meter readings for each usage-based billing period.
 - Allow the landlord to correct meter readings before the service charge is added to the renter's monthly bill.
@@ -77,9 +78,7 @@ The landlord can:
 - Renter accounts, renter-facing workflows, or in-app payment processing.
 - Visitor tracking.
 - Tracking unpaid landlord bills.
+- Contract-end and move-out workflows, including security-deposit refunds or deductions; deferred to V2.
 
-## Open Product Decisions
-
-- When an occupied contract ends, how is the refundable security deposit returned, and can unpaid rent or service charges be deducted from it?
 
 
