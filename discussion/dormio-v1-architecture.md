@@ -34,6 +34,7 @@ flowchart LR
 - Render the protected shell and navigation without waiting for noncritical data. Stream data-dependent sections with route or component loading boundaries and useful skeletons.
 - Prioritize the data needed for the page's main task, start independent reads in parallel, and defer below-the-fold sections or optional heavy client components.
 - Manage schema changes with SQL migrations and enforce data access with row-level security. Never expose the Supabase service-role key to the browser.
+- The user reports applying the SQL script to the hosted Supabase project and that it works. Verify the deployed schema and function definitions through Supabase MCP before making further database changes.
 - Build monthly balances and summaries as queries over authoritative records. V1 uses manually entered monthly charges, so scheduled billing jobs and a separate reporting store are unnecessary.
 
 ## Data Ownership
@@ -71,7 +72,7 @@ flowchart LR
 
 ### Initial Relational Schema Draft
 
-The initial schema and core workflow functions are drafted in source-controlled migrations and remain unapplied. The model below documents their intended relationships; both migrations still need PostgreSQL-level validation against synthetic data before real financial data is entered.
+The initial schema and core workflow functions are drafted in source-controlled migrations. The user reports applying the SQL script to hosted Supabase and that it works. A follow-up migration to enforce deposit receipt limits is drafted but not applied. The model below documents the intended relationships; verify deployed definitions before applying further database changes, and test remaining workflows against synthetic data before real financial data is entered.
 
 ### Core and occupancy
 

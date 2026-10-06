@@ -42,6 +42,7 @@ The landlord can:
 - Contract changes apply only to future charges. Existing charges and billing history remain unchanged.
 - Keep the current contract and service terms in place and preserve the terms used on each posted bill. Full history of term changes is deferred for V1 and may be considered in V2.
 - Create the first month's bill with monthly rent and service charges plus the remaining contract deposit due, after crediting any reservation deposit received. When the bill is fully paid, treat the remaining deposit due as fully received; for a partial payment, record the amount actually received toward the deposit.
+- Deposit receipts cannot exceed the refundable deposit amount due for the reservation or contract. Do not convert a reservation when its receipts exceed the finalized contract deposit.
 - Store contract terms in Dormio; signed lease document storage is not included in V1.
 
 ### Contract-end and move-out
@@ -59,7 +60,7 @@ The landlord can:
 - Create one rent charge each month from the active contract's rent terms; do not allow the landlord to enter or edit rent charges separately. The landlord can change the rent terms by modifying the contract.
 - Allow multiple manual payments toward the renter's combined outstanding balance, including payments made using different methods. Do not require the landlord to allocate payments to individual rent or service line items. For a partial first-month bill payment, record only the portion actually received toward the deposit; leave the rest unallocated.
 - For each payment, record the amount, date, and method: **Cash** or **Transfer**.
-- Reject any payment greater than the renter's current combined outstanding balance; do not carry overpayments forward as credit.
+- Reject any payment greater than the renter's current combined outstanding bill balance. Never accept the excess or carry it forward as credit.
 - Show the combined renter balance as **Unpaid**, **Partially paid**, or **Paid**, based on total charges and payments received.
 - Count rent and service charges as income only when the renter's combined balance across posted charges and payments reaches zero. Partial payments reduce the balance but are not income; recognize eligible charges in the month the balance reaches zero. Categorize rent as **Rent** and each service charge by its service name. Do not count refundable security deposits as income unless a reservation is canceled.
 
@@ -91,6 +92,10 @@ The landlord can:
 - Renter accounts, renter-facing workflows, or in-app payment processing.
 - Visitor tracking.
 - Tracking unpaid landlord bills.
+
+## Open Product Decisions
+
+- The first-month rent and service charge treatment for a mid-month move-in is deferred for later discussion; no V1 proration rule is confirmed.
 
 
 
