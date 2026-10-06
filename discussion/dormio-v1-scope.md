@@ -40,15 +40,18 @@ The landlord can:
 - When a renter moves in, create a contract linked to the renter and room, and record the move-in date. The room status changes to **Occupied**.
 - Initialize the contract with the room's default rent, deposit, and service settings. The landlord can override these terms when creating the contract and modify the contract after creation without changing the room defaults.
 - Contract changes apply only to future charges. Existing charges and billing history remain unchanged.
+- Keep the current contract and service terms in place and preserve the terms used on each posted bill. Full history of term changes is deferred for V1 and may be considered in V2.
 - Create the first month's bill with monthly rent and service charges plus the remaining contract deposit due, after crediting any reservation deposit received. When the bill is fully paid, treat the remaining deposit due as fully received; for a partial payment, record the amount actually received toward the deposit.
 - Store contract terms in Dormio; signed lease document storage is not included in V1.
 
 ### Contract-end and move-out
 
 - Allow the landlord to terminate an active contract for a room and create a contract-end bill for the renter.
-- Include final service charges and refundable-deposit settlement as separate items. Apply the held deposit only against final charges for that same contract; refund any remaining deposit. If final charges exceed the deposit, the remainder stays due on the renter's combined balance. Do not apply the deposit to earlier or unrelated renter charges.
+- Include final service charges and refundable-deposit settlement as separate items. Apply the held deposit only against final charges for that same contract; track any remaining deposit as a separate refund due, not a negative renter balance. If final charges exceed the deposit, the remainder stays due on the renter's combined balance. Do not apply the deposit to earlier or unrelated renter charges.
+- The landlord manually enters the final-month rent amount on the contract-end bill; do not automatically prorate it.
 - For usage-based services, use final contract meter readings to calculate the close-out charge.
 - Preserve the ended contract and its billing history, and do not add future charges to it. When termination is confirmed, the room becomes **Available**, regardless of whether the final amount has been collected or the refund has been issued.
+- Record each deposit refund with its amount, actual payment date, and method: **Cash** or **Transfer**.
 - A deposit application or refund is not income or expense. Final service charges follow the renter-wide balance and income-recognition rules.
 
 ### Rent charges and payments
@@ -89,10 +92,6 @@ The landlord can:
 - Visitor tracking.
 - Tracking unpaid landlord bills.
 
-## Open Product Decisions
-
-- Should final-month rent be automatically prorated based on the termination date, or manually entered as a final amount?
-- What date and payment method should be recorded when the remaining deposit is refunded?
 
 
 
