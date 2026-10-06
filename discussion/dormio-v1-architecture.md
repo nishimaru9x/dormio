@@ -83,7 +83,7 @@ This is a first-pass relational model, not committed SQL or migrations.
 ### Money and operations
 
 - `payments`: renter, amount, actual payment date, and method. These remain renter-level with no landlord allocation to individual bill lines.
-- `deposit_transactions`: append-only deposit receipt, application, forfeiture, and refund events linked to the reservation or contract. Refund events store amount, actual date, and method (**Cash** or **Transfer**); deposits are not income or expenses.
+- `deposit_transactions`: append-only deposit receipt, application, forfeiture, and refund events linked to the reservation or contract. When the first-month bill is fully paid, record its remaining deposit due as fully received; for a partial payment, record the amount actually received toward the deposit. Refund events store amount, actual date, and method (**Cash** or **Transfer**); deposits are not income or expenses.
 - `income_entries`: categorized other income, forfeited reservation deposits, and rent/service income recognized when the renter-wide balance reaches zero. Link recognized entries to their source bill lines where applicable.
 - `expenses`: amount, date, category/label, and optional room.
 - `maintenance_issues`: room, description, date, status, and notes; independent of occupancy.
@@ -95,10 +95,6 @@ This is a first-pass relational model, not committed SQL or migrations.
 - Allow at most one monthly bill per contract and billing month, and one contract-end bill per termination.
 - Use unique constraints for room/service defaults and contract/service settings. Ensure all foreign-key relationships remain within the same `owner_id`.
 - Scope every landlord-owned row with row-level security. Validate payment amount against the current combined renter balance atomically when recording it.
-
-### Open Relational Question
-
-- Since payments are not manually allocated to line items, define how the system determines how much of the refundable contract deposit has actually been received. The close-out workflow needs that amount to apply or refund, especially if a renter has only partially paid the combined balance.
 
 ## Proposed Workflow Boundaries
 
@@ -142,4 +138,4 @@ This is a first-pass relational model, not committed SQL or migrations.
 
 ## Next Design Step
 
-Resolve how unallocated renter payments contribute to refundable-deposit balances, then review this table model before creating migrations and row-level security policies.
+Review the table model and its ownership and consistency constraints before creating migrations and row-level security policies.
