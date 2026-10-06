@@ -29,6 +29,8 @@ The landlord can:
 
 - After staff sign-in, open the app on an **Overview** page.
 - Design the interface mobile-first, starting with phone-width workflows and adapting them for larger screens.
+- Make Overview task-focused: show reporting-month context and a common-action entry point, then an urgency-ordered list of actionable upcoming move-ins, billing or meter-reading work, unpaid or partially paid renter balances, and open maintenance issues; follow with room-status counts and a monthly summary of recorded income, expenses, and net.
+- Link attention items to their relevant records. Show **Available**, **Reserved**, and **Occupied** separately from maintenance status, and label the financial summary's reporting month and recorded-income basis.
 
 ### Rooms and renters
 
@@ -100,7 +102,7 @@ The landlord can:
 
 ## Open Product Decisions
 
-- The specific Overview content and primary actions, along with the mobile navigation pattern, remain to be decided.
+- The primary action on Overview and the mobile navigation pattern remain to be decided.
 - The first-month rent and service charge treatment for a mid-month move-in is deferred for later discussion; no V1 proration rule is confirmed.
 
 
