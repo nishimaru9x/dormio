@@ -1,7 +1,7 @@
 # Dormio V1 High-Level Architecture
 
 **Status:** Proposed direction  
-**Related document:** [Dormio V1 Product Requirements](dormio-v1-scope.md)
+**Related documents:** [Dormio V1 Product Requirements](dormio-v1-scope.md) · [Dormio V1 Frontend Discussion](dormio-v1-frontend.md)
 
 ## Recommendation
 
@@ -72,7 +72,7 @@ flowchart LR
 
 ### Initial Relational Schema Draft
 
-The initial schema and core workflow functions are drafted in source-controlled migrations. The user reports applying the SQL script to hosted Supabase and that it works. A follow-up migration to enforce deposit receipt limits is drafted but not applied. The model below documents the intended relationships; verify deployed definitions before applying further database changes, and test remaining workflows against synthetic data before real financial data is entered.
+The initial schema, core workflow functions, and deposit receipt limit migration are in source control. The user reports applying the SQL to hosted Supabase and that it works. The model below documents the intended relationships; verify deployed definitions before applying further database changes, and test remaining workflows against synthetic data before real financial data is entered.
 
 ### Core and occupancy
 
@@ -94,7 +94,7 @@ The initial schema and core workflow functions are drafted in source-controlled 
 ### Money and operations
 
 - `payments`: renter, amount, actual payment date, and method. These remain renter-level with no landlord allocation to individual bill lines.
-- `deposit_transactions`: append-only deposit receipt, application, forfeiture, and refund events linked to their payment, reservation, or contract. **Confirmed V1 direction:** this ledger is the source of truth; derive held/refundable deposit from its events instead of storing a separate editable balance. A receipt classifies part of a payment as deposit; it must not count as a second renter payment. When the first-month bill is fully paid, record its remaining deposit due as fully received; for a partial payment, record the actual amount received toward the deposit. Applications are limited to that contract's final charges. Refund events store amount, actual date, and method (**Cash** or **Transfer**); deposits are not income or expenses.
+- `deposit_transactions`: append-only deposit receipt, application, forfeiture, and refund events linked to their payment, reservation, or contract. **Confirmed V1 direction:** this ledger is the source of truth; derive held/refundable deposit from its events instead of storing a separate editable balance. A receipt classifies part of a payment as deposit; it must not count as a second renter payment. Record the remaining first-month deposit due as received only when the first-month bill is fully paid; partial payments do not create deposit receipt events. Applications are limited to that contract's final charges. Refund events store amount, actual date, and method (**Cash** or **Transfer**); deposits are not income or expenses.
 - `income_entries`: categorized other income, forfeited reservation deposits, and rent/service income recognized when the renter-wide balance reaches zero. Link recognized entries to their source bill lines where applicable; income recognition is not another cash receipt.
 - `expenses`: amount, date, category/label, and optional room.
 - `maintenance_issues`: room, description, date, status, and notes; independent of occupancy.

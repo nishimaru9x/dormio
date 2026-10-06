@@ -25,6 +25,11 @@ The landlord can:
 
 ## V1 Requirements
 
+### Frontend experience
+
+- After staff sign-in, open the app on an **Overview** page.
+- Design the interface mobile-first, starting with phone-width workflows and adapting them for larger screens.
+
 ### Rooms and renters
 
 - Manage rooms as standalone records, without property, building, or address details. Each room has a name or number, default monthly rent, and default refundable security-deposit amount.
@@ -41,7 +46,7 @@ The landlord can:
 - Initialize the contract with the room's default rent, deposit, and service settings. The landlord can override these terms when creating the contract and modify the contract after creation without changing the room defaults.
 - Contract changes apply only to future charges. Existing charges and billing history remain unchanged.
 - Keep the current contract and service terms in place and preserve the terms used on each posted bill. Full history of term changes is deferred for V1 and may be considered in V2.
-- Create the first month's bill with monthly rent and service charges plus the remaining contract deposit due, after crediting any reservation deposit received. When the bill is fully paid, treat the remaining deposit due as fully received; for a partial payment, record the amount actually received toward the deposit.
+- Create the first month's bill with monthly rent and service charges plus the remaining contract deposit due, after crediting any reservation deposit received. Record the remaining deposit due as received only when the first-month bill is fully paid; partial payments do not create deposit receipts.
 - Deposit receipts cannot exceed the refundable deposit amount due for the reservation or contract. Do not convert a reservation when its receipts exceed the finalized contract deposit.
 - Store contract terms in Dormio; signed lease document storage is not included in V1.
 
@@ -58,7 +63,7 @@ The landlord can:
 ### Rent charges and payments
 
 - Create one rent charge each month from the active contract's rent terms; do not allow the landlord to enter or edit rent charges separately. The landlord can change the rent terms by modifying the contract.
-- Allow multiple manual payments toward the renter's combined outstanding balance, including payments made using different methods. Do not require the landlord to allocate payments to individual rent or service line items. For a partial first-month bill payment, record only the portion actually received toward the deposit; leave the rest unallocated.
+- Allow multiple manual payments toward the renter's combined outstanding balance, including payments made using different methods. Do not require the landlord to allocate payments to individual rent or service line items. Partial payments reduce the outstanding balance but create neither income nor deposit receipts until the first-month bill is fully paid.
 - For each payment, record the amount, date, and method: **Cash** or **Transfer**.
 - Reject any payment greater than the renter's current combined outstanding bill balance. Never accept the excess or carry it forward as credit.
 - Show the combined renter balance as **Unpaid**, **Partially paid**, or **Paid**, based on total charges and payments received.
@@ -95,6 +100,7 @@ The landlord can:
 
 ## Open Product Decisions
 
+- The specific Overview content and primary actions, along with the mobile navigation pattern, remain to be decided.
 - The first-month rent and service charge treatment for a mid-month move-in is deferred for later discussion; no V1 proration rule is confirmed.
 
 
